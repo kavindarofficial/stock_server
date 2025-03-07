@@ -1,25 +1,19 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Stock, Portfolio, Transaction
+from .models import Profile
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email']
+        fields = ['username', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
 
-class StockSerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        Profile.objects.create(user=user)  # Create profile with initial balance
+        return user
+
+class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Stock
-        fields = '__all__'
-
-class PortfolioSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-
-    class Meta:
-        model = Portfolio
-        fields = '__all__'
-
-class TransactionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Transaction
-        fields = '__all__'
+        model = Profile
+        fields = ['balance', 'stocks']
