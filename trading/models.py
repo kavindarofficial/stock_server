@@ -1,10 +1,11 @@
-from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.auth.models import User
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    balance = models.FloatField(default=1500.0)  # Initial balance of $1500
-    stocks = models.JSONField(default=dict)  # Stores owned stocks in {'AAPL': 2, 'GOOGL': 3} format
+    balance = models.FloatField(default=1500.0)  # Initial balance
 
-    def __str__(self):
-        return self.user.username
+class StockHolding(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    stock_symbol = models.CharField(max_length=10)
+    quantity = models.IntegerField(default=0)

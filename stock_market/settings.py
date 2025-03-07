@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'rest_framework_simplejwt',
     'trading',
 ]
 
@@ -54,9 +55,21 @@ MIDDLEWARE = [
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [],
-    'DEFAULT_PERMISSION_CLASSES': [],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
 }
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),  # Access token valid for 30 minutes
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),  # Refresh token valid for 7 days
+    "ROTATE_REFRESH_TOKENS": True,  # Generates new refresh token on use
+    "BLACKLIST_AFTER_ROTATION": True,  # Old refresh tokens become invalid
+    "ALGORITHM": "HS256",
+}
+
 
 CORS_ALLOW_ALL_ORIGINS = True  # Allow frontend requests
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:3000']  # If using React frontend
